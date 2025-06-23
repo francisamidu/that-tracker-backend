@@ -2,6 +2,15 @@ import axios from "axios";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
+
+const rateLimiterUsingThirdParty = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hrs in milliseconds
+  max: 100,
+  message: "You have exceeded the 100 requests in 24 hrs limit!",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 dotenv.config();
 
@@ -12,6 +21,8 @@ const allowedOrigins = [
   "http://localhost:3000", // For local development of your React app
   "https://your-netlify-app-name.netlify.app", // Your actual Netlify domain
 ];
+
+app.use(rateLimiterUsingThirdParty);
 
 app.use(
   cors({
