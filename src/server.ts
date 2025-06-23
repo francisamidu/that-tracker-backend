@@ -24,6 +24,10 @@ const allowedOrigins = [
 
 app.use(rateLimiterUsingThirdParty);
 
+app.get("/", (_req, res) => {
+  res.json({ message: "Parcel Tracker API" });
+});
+
 app.use(
   cors({
     origin: (origin, callback) => {
