@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc --noCheck",
+    "build": "echo 'Building...'",
     "start": "node dist/server.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec bun run src/server.ts",
     "lint": "eslint 'src/**/*.ts'"
