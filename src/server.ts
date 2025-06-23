@@ -32,6 +32,8 @@ const allowedOrigins = [
   "https://that-tracker.netlify.app", // Your actual Netlify domain
 ];
 
+app.use(express.json());
+
 app.use(rateLimiterUsingThirdParty);
 app.use((req: Request, res: Response, next: NextFunction) => {
   cors({
@@ -59,49 +61,46 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.get("/", (_req, res) => {
+app.get("/api", (_req, res) => {
   res.json({ message: "Parcel Tracker API" });
 });
 
-app.post(
-  "/api/track",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const SHIP_API_KEY = process.env.SHIP_API_KEY;
-    const trackingNumber = req.body.trackingNumber;
+app.post("/api/track", async (req: Request, res: Response) => {
+  const SHIP_API_KEY = process.env.SHIP_API_KEY;
+  const trackingNumber = req.body.trackingNumber;
 
-    if (!trackingNumber) {
-      return res
-        .status(400)
-        .json({ error: "Missing trackingNumber in query or body" });
-    }
-
-    try {
-      const response = await axios.post(
-        `https://api.ship24.com/public/v1/trackers/track`,
-        {
-          trackingNumber,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${SHIP_API_KEY}`,
-          },
-        }
-      );
-      res.json(response.data);
-    } catch (error: any) {
-      console.error(
-        "Error fetching data from third-party API:",
-        error?.response?.data || error.message
-      );
-      const status = error?.response?.status || 500;
-      return res.status(status).json({
-        error: "Failed to fetch data from third-party API",
-        details: error?.response?.data || error.message,
-      });
-    }
+  if (!trackingNumber) {
+    return res
+      .status(400)
+      .json({ error: "Missing trackingNumber in query or body" });
   }
-);
+
+  try {
+    const response = await axios.post(
+      `https://api.ship24.com/public/v1/trackers/track`,
+      {
+        trackingNumber,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SHIP_API_KEY}`,
+        },
+      }
+    );
+    res.json(response.data);
+  } catch (error: any) {
+    console.error(
+      "Error fetching data from third-party API:",
+      error?.response?.data || error.message
+    );
+    const status = error?.response?.status || 500;
+    return res.status(status).json({
+      error: "Failed to fetch data from third-party API",
+      details: error?.response?.data || error.message,
+    });
+  }
+});
 
 app.post(
   "/api/webhook",
