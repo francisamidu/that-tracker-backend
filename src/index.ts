@@ -142,4 +142,6 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-export default app;
+app.listen(3001, () => {
+  console.log("Server is running on port 3001");
+});
