@@ -45,7 +45,7 @@ app.get("/", (_req, res) => {
   res.json({ message: "Parcel Tracker API" });
 });
 
-app.get("/api/track", async (req, res) => {
+app.post("/api/track", async (req, res) => {
   const THIRD_PARTY_API_KEY = process.env.RAPID_API_KEY; // Stored securely on the server
   const THIRD_PARTY_API_HOST = process.env.RAPID_API_HOST;
   const THIRD_PARTY_API_AUTH = process.env.RAPID_API_AUTH;
