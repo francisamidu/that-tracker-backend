@@ -23,11 +23,6 @@ const allowedOrigins = [
 ];
 
 app.use(rateLimiterUsingThirdParty);
-
-app.get("/", (_req, res) => {
-  res.json({ message: "Parcel Tracker API" });
-});
-
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -45,6 +40,10 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"], // List any custom headers you send
   })
 );
+
+app.get("/", (_req, res) => {
+  res.json({ message: "Parcel Tracker API" });
+});
 
 app.get("/api/track", async (req, res) => {
   const THIRD_PARTY_API_KEY = process.env.RAPID_API_KEY; // Stored securely on the server
