@@ -4,5 +4,6 @@
   "cleanUrls": true,
   "buildCommand": "pnpm run build",
 
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+  "outputDirectory": "/api"
 }
