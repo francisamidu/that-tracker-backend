@@ -27,7 +27,8 @@ app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
 });
 
 const allowedOrigins = [
-  "http://localhost:3000", // For local development of your React app
+  "http://localhost:5173",
+  "http://localhost:3000",
   "https://that-tracker.netlify.app", // Your actual Netlify domain
 ];
 
