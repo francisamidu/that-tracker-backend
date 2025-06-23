@@ -3,6 +3,12 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import serverless from "serverless-http";
+
+dotenv.config();
+
+const app = express();
+const router = express.Router();
 
 const rateLimiterUsingThirdParty = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 hrs in milliseconds
@@ -11,11 +17,6 @@ const rateLimiterUsingThirdParty = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3001;
 
 // Parse JSON bodies and handle JSON parse errors
 app.use(express.json({ strict: true }));
@@ -32,7 +33,11 @@ const allowedOrigins = [
   "https://that-tracker.netlify.app", // Your actual Netlify domain
 ];
 
-app.use(express.json());
+app.use(
+  express.json({
+    strict: true,
+  })
+);
 
 app.use(rateLimiterUsingThirdParty);
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -61,13 +66,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.get("/api", (_req, res) => {
+router.get("/", (_req, res) => {
   res.json({ message: "Parcel Tracker API" });
 });
 
-app.post("/api/track", async (req: Request, res: Response) => {
+router.post("/track", async (req: Request, res: Response) => {
   const SHIP_API_KEY = process.env.SHIP_API_KEY;
   const trackingNumber = req?.body?.trackingNumber;
+
+  console.log(req.body);
 
   if (!trackingNumber) {
     return res
@@ -102,8 +109,8 @@ app.post("/api/track", async (req: Request, res: Response) => {
   }
 });
 
-app.post(
-  "/api/webhook",
+router.post(
+  "/webhook",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.dir(
@@ -120,6 +127,10 @@ app.post(
   }
 );
 
+// Mount router at /api
+app.use("/api", router);
+
+
 // Global error handler
 app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   console.error("Global error handler:", err);
@@ -133,6 +144,6 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-});
+// Export the handler for Netlify serverless functions
+export const handler = serverless(app);
+
