@@ -3,7 +3,6 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
-import serverless from "serverless-http";
 
 dotenv.config();
 
@@ -130,7 +129,6 @@ router.post(
 // Mount router at /api
 app.use("/api", router);
 
-
 // Global error handler
 app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   console.error("Global error handler:", err);
@@ -143,7 +141,3 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     details: err.stack,
   });
 });
-
-// Export the handler for Netlify serverless functions
-export const handler = serverless(app);
-
