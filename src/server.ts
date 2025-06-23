@@ -34,11 +34,15 @@ const allowedOrigins = [
 app.use(rateLimiterUsingThirdParty);
 app.use((req: Request, res: Response, next: NextFunction) => {
   cors({
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void
+    ) => {
       // allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = "The CORS policy for this site does not allow access from the specified Origin.";
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
         return callback(new Error(msg), false);
       }
       return callback(null, true);
@@ -62,13 +66,12 @@ app.post(
   "/api/track",
   async (req: Request, res: Response, next: NextFunction) => {
     const SHIP_API_KEY = process.env.SHIP_API_KEY;
-    const trackingNumber =
-      req.query.tracking_number || req.body.tracking_number;
+    const trackingNumber = req.body.trackingNumber;
 
     if (!trackingNumber) {
       return res
         .status(400)
-        .json({ error: "Missing tracking_number in query or body" });
+        .json({ error: "Missing trackingNumber in query or body" });
     }
 
     try {
