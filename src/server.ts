@@ -67,7 +67,7 @@ app.get("/api", (_req, res) => {
 
 app.post("/api/track", async (req: Request, res: Response) => {
   const SHIP_API_KEY = process.env.SHIP_API_KEY;
-  const trackingNumber = req.body.trackingNumber;
+  const trackingNumber = req?.body?.trackingNumber;
 
   if (!trackingNumber) {
     return res
